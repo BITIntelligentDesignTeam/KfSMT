@@ -12,5 +12,5 @@
 
 
 # KfSMT的说明文档
-[Documentation of Knowledge-fused Surrogate Modeling Toolbox](https://kfsmt.readthedocs.io/en/latest/index.html).
+[Documentation of Knowledge-fused Surrogate Modeling Toolbox](https://kfsmt.readthedocs.io/zh_CN/latest/).
 
