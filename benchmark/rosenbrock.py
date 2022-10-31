@@ -3,11 +3,12 @@ import numpy as np
 from benchmark.benchmarkBase import Benchmark
 import matplotlib.pyplot as plt
 
-class Sphere(Benchmark):
+class Rosenbrock(Benchmark):
+
     def _initialize(self):
 
-        self.xlimits[:, 0] = -10.0
-        self.xlimits[:, 1] = 10.0
+        self.xlimits[:, 0] = -2
+        self.xlimits[:, 1] = 2
 
     def _evaluate(self, x):
         """
@@ -26,43 +27,45 @@ class Sphere(Benchmark):
         """
         dataSet = {}
 
-        inputTitle=[]
-        outputTitle=["y"]
+        inputTitle = []
+        outputTitle = ["y"]
         inputRange = []
-        outputRange = [0,100*self.ndim]
+        outputRange = [0, 309]
 
         for i in range(self.ndim):
-            inputRange.append([0,10])
-            inputTitle.append('x'+str(i))
+            inputRange.append([0, 10])
+            inputTitle.append('x' + str(i))
 
-        dataSet["title"] = [inputTitle,outputTitle]
-        dataSet["range"] = [inputRange,outputRange]
+        dataSet["title"] = [inputTitle, outputTitle]
+        dataSet["range"] = [inputRange, outputRange]
         dataSet["input"] = x
 
         ne, nx = x.shape
 
         y = np.zeros((ne, 1))
 
-        y[:, 0] = np.sum(x ** 2, 1).T
+        for ix in range(nx - 1):
+            y[:, 0] += (
+                    100.0 * (x[:, ix + 1] - x[:, ix] ** 2) ** 2 + (1 - x[:, ix]) ** 2
+            )
+
 
         dataSet["output"] = y
 
-
         return dataSet
 
-
 if __name__ == '__main__':
-
     num = 100
     ndim = 2
     x = np.ones((num, ndim))
 
-    x[:, 0] = np.linspace(-10, 10.0, num)
-    x[:, 1] = 0.0
-    s = Sphere()
+    x[:, 0] = np.linspace(-2, 2, num)
+    x[:, 1] = np.linspace(-2, 2, num)
+    s = Rosenbrock()
     dataSet = s(x)
     plt.plot(dataSet["input"][:, 0], dataSet["output"][:, 0])
     plt.xlabel("x")
     plt.ylabel("y")
     plt.show()
     print(dataSet)
+    print(s(np.array([[-5, 0]])))

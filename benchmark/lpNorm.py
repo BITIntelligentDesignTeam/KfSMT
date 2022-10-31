@@ -3,11 +3,15 @@ import numpy as np
 from benchmark.benchmarkBase import Benchmark
 import matplotlib.pyplot as plt
 
-class Sphere(Benchmark):
+
+class LpNorm(Benchmark):
+
     def _initialize(self):
 
-        self.xlimits[:, 0] = -10.0
-        self.xlimits[:, 1] = 10.0
+        self.xlimits[:, 0] = -1
+        self.xlimits[:, 1] = 1
+
+        self.p = 2
 
     def _evaluate(self, x):
         """
@@ -41,9 +45,11 @@ class Sphere(Benchmark):
 
         ne, nx = x.shape
 
+        p = self.p
+        assert p > 0
         y = np.zeros((ne, 1))
-
-        y[:, 0] = np.sum(x ** 2, 1).T
+        lp_norm = np.sum(np.abs(x) ** p, axis=-1) ** (1.0 / p)
+        y[:, 0] = lp_norm
 
         dataSet["output"] = y
 
@@ -58,8 +64,8 @@ if __name__ == '__main__':
     x = np.ones((num, ndim))
 
     x[:, 0] = np.linspace(-10, 10.0, num)
-    x[:, 1] = 0.0
-    s = Sphere()
+    x[:, 1] = np.linspace(-10, 10.0, num)
+    s = LpNorm()
     dataSet = s(x)
     plt.plot(dataSet["input"][:, 0], dataSet["output"][:, 0])
     plt.xlabel("x")
