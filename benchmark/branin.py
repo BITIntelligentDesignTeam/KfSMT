@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 class Branin(Benchmark):
 
     def _initialize(self):
-        assert self.ndim == 2, "该函数的输入只能支持二维"
+
+        self.name = "branin"
 
         self.xlimits[0, 0] = -5
         self.xlimits[0, 1] = 10.0
@@ -30,6 +31,9 @@ class Branin(Benchmark):
         ndarray[ne, 1]
             Functions values if kx=None or derivative values if kx is an int.
         """
+
+        assert self.ndim == 2, "该函数的输入只能支持二维"
+
         dataSet = {}
 
         inputTitle = []

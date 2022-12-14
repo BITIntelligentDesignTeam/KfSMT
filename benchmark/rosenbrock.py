@@ -7,6 +7,8 @@ class Rosenbrock(Benchmark):
 
     def _initialize(self):
 
+        self.name = "rosenbrock"
+
         self.xlimits[:, 0] = -2
         self.xlimits[:, 1] = 2
 

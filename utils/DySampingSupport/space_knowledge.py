@@ -1,4 +1,4 @@
-from .xml_read import getSpaceKnowledge
+from xml_read import getSpaceKnowledge
 import numpy as np
 
 
@@ -10,9 +10,12 @@ def swapPositions(list_i, pos1, pos2):
 
 def sortSpaceKnowledge(*path):
 
+
+    #对于一条知识的情况
     if len(path) == 1:
 
         space = getSpaceKnowledge(path[0])
+        print(space)
 
         Space_list = space['Relation']
         Space_num = len(Space_list)
@@ -74,6 +77,8 @@ def sortSpaceKnowledge(*path):
                     pram_range = []
 
                     level = Input_i['area_level']
+
+                    #不同重要区域的权重、-
                     if level == '较复杂':
                         weight = 1.5
                     elif level == '很复杂':

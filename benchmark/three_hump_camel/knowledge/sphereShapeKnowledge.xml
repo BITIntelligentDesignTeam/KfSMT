@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="gb2312"?>
+<info infoType = "形状型" inputType="x0" outputType = "y">
+<points minX="-10" maxX="10" minY="0" maxY="100">
+<point>-9.91,102.40</point>
+<point>-8.06,20.80</point>
+<point>.28,-84.80</point>
+<point>7.05,-3.20</point>
+<point>9.97,105.60</point>
+</points>
+</info>

@@ -1,6 +1,7 @@
 from knowledge.AttributeKnowledge import AttributeKnowledge
 from knowledge.ShapeKnowledge import ShapeKnowledge, GradientSelection, HausdorffSelection, FermatPointsFusion, GAFusion
 from knowledge.MonotonicityKnowledge import MonotonicityKnowledge
+from knowledge.SpaceKnowledge import SpaceKnowledge
 import xml.dom.minidom
 import os
 import numpy as np
@@ -27,7 +28,7 @@ class KnowledgeSet(object):
     外部想要对一个或者多个知识进行读取，查看，融合，筛选等操作的时候，调用此类即可，无需知道知识的具体类型
     """
 
-    def __init__(self, *args, knowType=None, knowInput=None, knowOutput=None, folder=None, knowledgelist=None):
+    def __init__(self, *args, folder=None, knowledgelist=None, knowType=None, knowInput=None, knowOutput=None):
         """
         获取知识的类型
         :param *args : 知识路径
@@ -69,7 +70,7 @@ class KnowledgeSet(object):
             except UnicodeDecodeError:
                 file_object = open(i, 'r+', encoding="utf-8")
 
-                # 将"gb2312"格式转化为"utf-8"格式
+                # # 将"gb2312"格式转化为"utf-8"格式
                 xmlfile = file_object.read()
                 file_object.close()
                 xmlfile = xmlfile.replace("utf-8", "gb2312")
@@ -145,6 +146,10 @@ class KnowledgeSet(object):
                 k = ShapeKnowledge(self.path[i])
                 knowledgeDic = k.readKnowledge()
 
+            if self.type[i] == '空间型':
+                k = SpaceKnowledge(self.path[i])
+                knowledgeDic = k.readKnowledge()
+
             know.append(knowledgeDic)
 
         return know
@@ -166,6 +171,11 @@ class KnowledgeSet(object):
 
             if self.type[i] == '形状型':
                 k = ShapeKnowledge(self.path[i])
+                know = k.readKnowledge()
+                k.visualKnowledge()
+
+            if self.type[i] == '空间型':
+                k = SpaceKnowledge(self.path[i])
                 know = k.readKnowledge()
                 k.visualKnowledge()
 
@@ -240,6 +250,15 @@ class KnowledgeSet(object):
         return knowNew
 
     def gaFuse(self, select=None, x_t=None, y_t=None, printPicture=True, savePath=None):
+        """
+
+        :param select: None,"gradient","hausdorff"
+        :param x_t: "gradient"筛选时需要的数据
+        :param y_t: "gradient"筛选时需要的数据
+        :param printPicture:
+        :param savePath:
+        :return:
+        """
         if select == None:
             knowlist = self.path
         elif select == "gradient":
@@ -258,19 +277,23 @@ class KnowledgeSet(object):
         return knowNew
 
 
-def matyas(x1, x2):
-    return 0.26 * (x1 ** 2 + x2 ** 2) - 0.48 * x1 * x2
+
 
 
 if __name__ == "__main__":
-    # k = KnowledgeSet("C:\data\测试1.txt", "C:\data\测试2.txt", "C:\data\测试3.txt", "C:\data\测试4.txt")
-    # k = KnowledgeSet("C:\data\测试1.txt", "C:\data\测试2.txt", "C:\data\测试3.txt", "C:\data\测试4.txt", knowType=["单调型"])
+
+    k = KnowledgeSet("C:\data\测试1.txt", "C:\data\测试2.txt", "C:\data\测试3.txt", "C:\data\测试4.txt","C:\data\新空间型知识.txt")
+    # k = KnowledgeSet("C:\data\测试1.txt", "C:\data\测试2.txt", "C:\data\测试3.txt", "C:\data\测试4.txt","C:\data\属性-范围.txt",knowType=["单调型"])
     # k = KnowledgeSet("C:\data\测试1.txt", "C:\data\测试2.txt", "C:\data\测试3.txt", "C:\data\测试4.txt",knowInput=["马赫数"])
     # k = KnowledgeSet("C:\data\测试1.txt", "C:\data\测试2.txt", "C:\data\测试3.txt", "C:\data\测试4.txt", knowOutput=["全弹法向力系数"])
     #
-    # a = k.readKnowledge()
-    # k.visualKnowledge()
-    # print(a)
+    a = k.readKnowledge()
+    k.visualKnowledge()
+    print(a)
+    print(len(a))
+
+    def matyas(x1, x2):
+        return 0.26 * (x1 ** 2 + x2 ** 2) - 0.48 * x1 * x2
 
     x1 = np.linspace(-10, 10, 15)
     x2 = np.linspace(-10, 10, 15)
@@ -281,13 +304,17 @@ if __name__ == "__main__":
 
     y_train = np.array(matyas(x_train[:, 0], x_train[:, 1])) + np.random.randn(225) * 0.5
     y_train = y_train.reshape(-1, 1)
-    #
-    # k = KnowledgeSet(folder=["C:\data\筛选测试"])
-    # #knowPass = k.gradientSelect(x_train, y_train)
-    # knowPass = k.hausdorffSelect(savePath=r"C:\data\筛选测试\筛选.png")
-    # print(knowPass)
-    # # # #
+
+    #知识筛选
     k = KnowledgeSet(folder=["C:\data\筛选测试"])
-    # knowNew = k.fermatPointsFuse()
-    knowNew = k.fermatPointsFuse(savePath=r"C:\data\筛选测试\先筛选后融合1.png")
+    # knowPass = k.gradientSelect(x_t=x_train, y_t=y_train,savePath=r"C:\data\筛选.png")
+    knowPass = k.hausdorffSelect(savePath=r"C:\data\筛选.png")
+    print(knowPass)
+    print(len(knowPass))
+
+
+    # #知识融合
+    k = KnowledgeSet(folder=["C:\data\筛选测试"])
+    knowNew = k.fermatPointsFuse(select="hausdorff")
+    # knowNew = k.gaFuse(select="hausdorff")
     print(knowNew)

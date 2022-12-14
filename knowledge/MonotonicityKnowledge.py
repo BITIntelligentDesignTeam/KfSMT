@@ -79,16 +79,22 @@ class MonotonicityKnowledge(MappingBase):
 
 
 if __name__ == "__main__":
-    know1 = MonotonicityKnowledge("C:\data\单调型知识4.xml")
+    # know1 = MonotonicityKnowledge("C:\data\CMGMonoKnowledge3.xml")
+    #
+    # know1.writeKnowledge(input_type=['转台转速'],
+    #                      output_type=['径向间隙减少量'],
+    #                      input_range=[[0, 5.0]],
+    #                      mapping_relation=['单调递增'],
+    #                      convar=[{'convar_type': '温度', 'convar_RangeOrValue': 'range', 'convar_range': [-20, 60]},
+    #                              {'convar_type': '框架转速', 'convar_RangeOrValue': 'range', 'convar_range': [5, 57.3]}])
+    #
+    #
+    # know1.visualKnowledge()
+    # a = know1.readKnowledge()
+    # print(a)
 
-    know1.writeKnowledge(input_type=['攻角'],
-                         output_type=['法向力'],
-                         input_range=[[3.0, 10.0]],
-                         mapping_relation=['单调递增'],
-                         convar=[{'convar_type': '马赫数', 'convar_RangeOrValue': 'value', 'convar_value': 4.0},
-                                 {'convar_type': '雷诺数', 'convar_RangeOrValue': 'range', 'convar_range': [3.0, 5.0]}])
+    know2 = MonotonicityKnowledge( "C:\data\单调型知识1.txt")
+    a = know2.readKnowledge()
+    know2.visualKnowledge()
 
-    know1.visualKnowledge()
-    a = know1.readKnowledge()
     print(a)
-

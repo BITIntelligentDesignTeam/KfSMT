@@ -21,11 +21,12 @@ def rangeTransform(rangeStr):
     return result
 
 
+
 class CsvData(Database):
     # 读取规定格式的csv文件
 
     def _read(self):
-        with open(path, "rt") as csvfile:
+        with open(self.path, "rt") as csvfile:
             reader = csv.reader(csvfile)
             file = [row for row in reader]
 
@@ -35,6 +36,7 @@ class CsvData(Database):
         points = file[3:]
         pointsNum = len(points)
         points_ = []
+
         for j in range(pointsNum):
             point = [float(x) for x in points[j]]
             points_.append(point)
@@ -52,14 +54,17 @@ class CsvData(Database):
         outputIndex = []
 
         for i in range(parameterNum):
+
             if inputOrOutput[i] == "input":
                 titleInput.append(parameter[i])
-                rangeInput.append(rangeTransform(parameterRange[i]))
+                rangeInput.append(list(rangeTransform(parameterRange[i])))    #后面还要改，现在是全是list
                 inputIndex.append(i)
+
             elif inputOrOutput[i] == "output":
                 titleOutput.append(parameter[i])
-                rangeOutput.append(rangeTransform(parameterRange[i]))
+                rangeOutput.append(list(rangeTransform(parameterRange[i])))        #后面还要改，现在是全是list
                 outputIndex.append(i)
+
         self.range = [rangeInput, rangeOutput]
         self.title = [titleInput, titleOutput]
 
@@ -81,10 +86,16 @@ class CsvData(Database):
 
 
 if __name__ == "__main__":
-    path = r"C:\data\数据示例.csv"
+    path = r"C:\data\动态采样.csv"
     d = CsvData(path)
     dataSet = d.read()
-    # print(dataSet)
+    input = dataSet["input"]
+    print(input)
+    out = dataSet["output"]
+    a  =[input,out]
+    print(a)
+
+    print(dataSet)
     trainSet, testSet = d.divide(0.8)
-    # print(trainSet["input"])
-    # print(testSet["output"])
+    print(trainSet["input"].shape)
+    print(testSet["input"].shape)

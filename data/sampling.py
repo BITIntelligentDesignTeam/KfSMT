@@ -16,6 +16,7 @@ class SamplingBase(object, metaclass=ABCMeta):
         """
         :param xlimts: 采样空间
         """
+        self.xlimts = xlimts
         self.xTitle = [i for i in xlimts]
         self.xRange = [xlimts[i] for i in self.xTitle]
         self._initialize()
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     # s = FullFactorialSampling(xlimts)
     # s.clip = True
     points = s.sample(50, tablePath=path)
-    print(points.shape)
+    print(points)
 
     # 画图展示
     plt.plot(points[:, 0], points[:, 1], "o")

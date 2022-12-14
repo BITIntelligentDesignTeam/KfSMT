@@ -2,6 +2,7 @@ import numpy as np
 from utils.e_DaKnow.class_Neu_net import Neu_Net
 
 class Error(object):
+
     def __init__(self,Hid_layer, syn0, syn1, x, y):
         self.Hid_layer = Hid_layer
         self.syn0 = syn0

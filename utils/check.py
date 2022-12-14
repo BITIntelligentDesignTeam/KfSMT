@@ -18,23 +18,10 @@ def checkDataKnow(dataSet,knowlist):
                 break
 
         for j in i["output_type"]:
-            if j not in inputTitle:
+            if j not in outputTitle:
                 knowlist.remove(i)
                 break
 
     return dataSet,knowlist
-
-
-
-
-a=[[1,2],[1,6]]
-b=[1,2,3,4]
-for i in a:
-    for j in i :
-        if j not in b:
-            a.remove(i)
-            break
-
-print(a)
 
 

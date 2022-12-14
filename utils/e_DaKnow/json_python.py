@@ -84,8 +84,6 @@ in_P, in_B, out_P, out_B, status = process.processKnow(path_know)
 print(in_P, in_B, out_P, out_B, status)
 
 
-[['发动机总冲'], ['发动机总冲']] [[[0, 3]], [[0, 4]]] [['转动惯量'], ['转动惯量']] [[[4, 6]], [[4, 6]]] [True, True]
-
     
     
     

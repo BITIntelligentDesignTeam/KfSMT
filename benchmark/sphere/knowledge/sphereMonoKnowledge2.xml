@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="gb2312"?>
+	<info infoType="单调型" inputType="x0" outputType="y">
+		<section singleTypeName="单调递减" minValue="-10" maxValue="0"/>
+	</info>

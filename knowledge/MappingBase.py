@@ -1,4 +1,4 @@
-from knowledge.ExperienceBase import ExperienceBase
+from knowledge.Experience import ExperienceBase
 
 
 class MappingBase(ExperienceBase):

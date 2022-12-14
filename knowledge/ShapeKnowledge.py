@@ -1021,6 +1021,7 @@ def matyas(x1, x2):
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
+
     know1 = ShapeKnowledge(path="C:\data\形状型知识3.xml")
 
     know1.writeKnowledge(input_type=['攻角'],
@@ -1035,36 +1036,41 @@ if __name__ == "__main__":
     a = know1.readKnowledge()
     print(a)
 
-    # know3 = ShapeKnowledge("C:\data\形状型知识3.xml")
+    # know3 = ShapeKnowledge("C:\data\sphereShapeKnowledge.xml")
     # c = know3.readKnowledge()
     # know3.visualKnowledge()
     # print(c)
-    # a = know3.bezierPoints()
-    # print(a)
+    # points = know3.bezierPoints()
+    # print(points)
     # gradient = know3.bezierFirstGradient()
     # print(gradient)
-
-    # x1,x2均匀采样
-    x1 = np.linspace(-10, 10, 15)
-    x2 = np.linspace(-10, 10, 15)
-    # meshgrid 扩展成矩阵
-    x1v, x2v = np.meshgrid(x1, x2)
-    # flatten 合并
-    x_train = np.column_stack((x1v.flatten(), x2v.flatten()))
-
-    y_train = np.array(matyas(x_train[:, 0], x_train[:, 1])) + np.random.randn(225) * 0.5
-    y_train = y_train.reshape(-1, 1)
-
-    # select = GradientSelection(xt=x_train, yt=y_train, folder=["C:\data\筛选测试"])
-    # select = HausdorffSelection(folder=["C:\data\筛选测试"])
-    # passlist = select.select(savePath="C:\data\筛选测试\select_pic.png")
-    # print(passlist)
-
-    mix = FermatPointsFusion(folder=["C:\data\筛选测试"])
-    # mix = GAFusion(folder=["C:\data\筛选测试"])
-    knowNew = mix.fuse(savePath=r"C:\data\fuse_pic.png")
-    print(knowNew)
-
+    # plt.plot(points[0, :], points[1, :])
+    # plt.xlabel("x")
+    # plt.ylabel("y")
+    # plt.show()
+    #
+    # #
+    # # x1,x2均匀采样
+    # x1 = np.linspace(-10, 10, 15)
+    # x2 = np.linspace(-10, 10, 15)
+    # # meshgrid 扩展成矩阵
+    # x1v, x2v = np.meshgrid(x1, x2)
+    # # flatten 合并
+    # x_train = np.column_stack((x1v.flatten(), x2v.flatten()))
+    #
+    # y_train = np.array(matyas(x_train[:, 0], x_train[:, 1])) + np.random.randn(225) * 0.5
+    # y_train = y_train.reshape(-1, 1)
+    #
+    # # select = GradientSelection(xt=x_train, yt=y_train, folder=["C:\data\筛选测试"])
+    # # select = HausdorffSelection(folder=["C:\data\筛选测试"])
+    # # passlist = select.select(savePath="C:\data\筛选测试\select_pic.png")
+    # # print(passlist)
+    #
+    # mix = FermatPointsFusion(folder=["C:\data\筛选测试"])
+    # # mix = GAFusion(folder=["C:\data\筛选测试"])
+    # knowNew = mix.fuse(savePath=r"C:\data\fuse_pic.png")
+    # print(knowNew)
+    #
     # # 画图
     # plt.plot(points[0, :], points[1, :])
     # plt.xlabel("x")

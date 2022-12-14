@@ -8,6 +8,8 @@ class LpNorm(Benchmark):
 
     def _initialize(self):
 
+        self.name = "lpNorm"
+
         self.xlimits[:, 0] = -1
         self.xlimits[:, 1] = 1
 

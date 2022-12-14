@@ -25,7 +25,8 @@ def getDerivative(x: np.ndarray, y: np.ndarray, x0):
     x_index = x.index(x0)
 
     dy0 = y[x_index] - y[x_index - 1]
-    dx0 = x[x_index + 1] - x[x_index - 1]
+    # dx0 = x[x_index + 1] - x[x_index - 1]
+    dx0 = x[x_index ] - x[x_index - 1]
 
     # 防止导数过大或者过小
     if dy0 > 5:
@@ -55,6 +56,7 @@ class GPBase(SurrogateModel):
     def predict(self, x, cov=False):
         mu,var = self.model.predict_noiseless([x])
         if cov==False:
+            print(mu)
             return mu
         if cov == True:
             return mu,var
@@ -68,13 +70,9 @@ class GP(GPBase):
 
         # 设置对应的似然函数
         gauss = GPy.likelihoods.Gaussian()
-
-
-        m = GPy.models.MultioutputGP(X_list=[self.dataSet['input']], Y_list=[self.dataSet['output']],
-                                     kernel_list=[kernel,],
+        m = GPy.models.MultioutputGP(X_list=[self.dataSet['input']], Y_list=[self.dataSet['output']],kernel_list=[kernel,],
                                      likelihood_list=[gauss])
         m.optimize(messages=0, ipython_notebook=False)
-
 
         self.model = m
 
@@ -103,8 +101,8 @@ class GPK(GPBase):
             assert i['output_type'] == outputTitle, "请确保知识和数据的输出变量保持一致"
             assert i['input_type'][0] in inputTitle, "请确保知识和数据的输入变量保持一致"
 
-            monoNum = 5  # 每条单调型知识的取点数量
-            shapeNum = 5  # 每条形状型知识的取点数量
+            monoNum = 5   # 每条单调型知识的取点数量
+            shapeNum = 5   # 每条形状型知识的取点数量
             knowListGpOutput = []
             knowListGpInput = []
 
@@ -153,7 +151,7 @@ class GPK(GPBase):
                 x, y = bezierPoints(i['mapping_relation'])
                 for m in range(shapeNum):
                     x0 = knowListGpInput_[m]
-                    x0_derivative = getderivative(x, y, x0)
+                    x0_derivative = getDerivative(x, y, x0)
                     knowListGpOutput.append([x0_derivative])
 
                 if i['convar'] != None:
@@ -214,61 +212,64 @@ if __name__ == "__main__":
 
     from data.CsvData import CsvData
     from knowledge.KnowledgeSet import KnowledgeSet
+    from benchmark.sphere import Sphere
+    from utils.normalization import Normalization
+    from sklearn.preprocessing import MinMaxScaler
 
-    def y_test(x1,x2,x3):
-        y = 3 * np.cos(x1) + (x2 ** 2 / 5 )+ np.sin(x3)
-        return y
+    ndim = 2
+    trainNum = 50
+    testNum = 10
 
-    N = 10
-    x1 = np.linspace(0, 5, N)
-    x2 = np.linspace(0, 5, N)
-    x3 = np.linspace(0, 5, N)
-    x = np.array([x1, x2, x3]).T
+    x = np.ones((trainNum, ndim))
+    x[:, 0] = np.linspace(-10, 10.0, trainNum)
+    x[:, 1] = np.linspace(-10, 10.0, trainNum)
 
-    y = []
-    for i in range(N):
-        y.append(y_test(x1[i],x2[i],x3[i]))
+    xt = np.ones((testNum, ndim))
+    xt[:, 0] = np.linspace(-10, 10.0, testNum)
+    xt[:, 1] = np.linspace(-10, 10.0, testNum)
 
-    y = np.asarray(y).reshape(-1, 1)
+    s = Sphere()
+    trainSet = s(x)           #训练集
+    testSet = s(xt)            #测试集
 
 
-
-    #获取数据
-    path = r"C:\data\代理模型训练\代理模型训练.csv"
-    d = CsvData(path)
-    dataSet = d.read()
-    print(dataSet)
-    trainSet, testSet = d.divide(0.8)
-
-    #获取知识
-    k = KnowledgeSet("C:\data\代理模型训练\单调型知识1.txt","C:\data\代理模型训练\单调型知识2.txt" )
+    # 获取知识
+    k = KnowledgeSet( "C:\data\sphereMonoKnowledge1.xml","C:\data\sphereShapeKnowledge.xml",
+                     "C:\data\sphereMonoKnowledge2.xml")
     knowList = k.readKnowledge()
-    k.visualKnowledge()
-    x_test = testSet["input"]
+
+    #对知识和数据进行归一化操作
+    n = Normalization()
+    trainSet,knowList = n(trainSet,knowList)
+    print(trainSet)
+    print(knowList)
+    xt = n.transform(xt)
 
 
-    gpModel = GPK()
-    # gpModel = GP()
+    Model = GPK()
 
-    gpModel.setData(trainSet)               #设置数据
+    Model.setData(trainSet)                       #设置数据
 
-    gpModel.setKnowledge(knowList=knowList)           #设置知识
+    Model.setKnowledge(knowList=knowList)                        #设置知识
 
-    gpModel.train()          #训练
+    Model.train()          #训练
 
-    t = 10
-    x1t = np.linspace(0, 5, t)
-    x2t = np.linspace(0, 5, t)
-    x3t = np.linspace(0, 5, t)
-    x_test = np.array([x1t, x2t, x3t]).T
+    yp = Model.predict(xt)        #预测
 
-    yp = gpModel.predict(x_test)        #预测
 
-    b = gpModel.score(testSet,index="RSME")
-    print(b)
+    ln1 = plt.plot(trainSet["input"][:, 0], trainSet["output"][:, 0], label ="真实",color = "red")
+    ln2 = plt.plot(xt[:, 0], yp[:, 0], label ="预测",color = 'green')
+    print(xt[:, 0])
+    print(yp[:, 0])
+    plt.legend()
+    plt.show()
 
-    gpModel.save(r"C:\data\代理模型训练\高斯过程代理模型.pkl")    #保存模型文件
+    yp = n.inverse(yp)
+    #将预测完毕后的数据进行反归一化
+    print(yp)
+    # b = Model.score(testSet,index="RSME")  #评价代理模型 ，"RSME", "R2", "MAE", "Confidence"
 
+    Model.save(r"C:\data\代理模型训练\代理模型.pkl")    #保存模型文件
 
 
     gpModel2 = None                           #加载模型文件

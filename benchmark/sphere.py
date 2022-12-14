@@ -3,11 +3,15 @@ import numpy as np
 from benchmark.benchmarkBase import Benchmark
 import matplotlib.pyplot as plt
 
+
+
 class Sphere(Benchmark):
     def _initialize(self):
 
         self.xlimits[:, 0] = -10.0
         self.xlimits[:, 1] = 10.0
+        self.name = "sphere"
+
 
     def _evaluate(self, x):
         """
@@ -43,6 +47,7 @@ class Sphere(Benchmark):
 
         y = np.zeros((ne, 1))
 
+
         y[:, 0] = np.sum(x ** 2, 1).T
 
         dataSet["output"] = y
@@ -53,7 +58,7 @@ class Sphere(Benchmark):
 
 if __name__ == '__main__':
 
-    num = 100
+    num = 20
     ndim = 2
     x = np.ones((num, ndim))
 
@@ -66,3 +71,9 @@ if __name__ == '__main__':
     plt.ylabel("y")
     plt.show()
     print(dataSet)
+
+    know = s.getKnowledge(knowType=["单调型","形状型"],visual = True)
+    print(know)
+
+
+

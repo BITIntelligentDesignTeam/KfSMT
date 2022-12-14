@@ -167,6 +167,7 @@ if __name__ == "__main__":
     print(knowlist)
 
     xt = np.array([[2, 5, 1]])
+    print(xt)
     y_p = np.array([[1]])
     xtNew = n.transform(xt)
     y_P = n.inverse(y_p)

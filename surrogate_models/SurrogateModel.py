@@ -1,6 +1,7 @@
 import numpy as np
 from math import sqrt
 import pickle
+from utils.check import checkDataKnow
 
 class SurrogateModel(object):
     """
@@ -15,15 +16,19 @@ class SurrogateModel(object):
 
         self._initialize()
         self.model = None
-        self.t = False
 
     def _initialize(self):
         pass
 
     def setData(self, dataSet):
         self.dataSet = dataSet
-        self.inputTitle = self.dataSet["title"][0]
-        self.outputTitle = self.dataSet["title"][1]
+
+
+        self.inputTitle = self.dataSet["title"][0]          #数据的输入参数列表
+        self.outputTitle = self.dataSet["title"][1]         #数据的输出参数列表
+
+        self.nx = len(self.inputTitle)         #输入的维度
+        self.ny = len(self.outputTitle)        #输出的维度
 
     def setKnowledge(self, *args, knowList=None):
         for i in args:
@@ -33,6 +38,8 @@ class SurrogateModel(object):
             self.knowList.append(i)
 
     def train(self):
+
+        # self.dataSet,self.knowList = checkDataKnow(self.dataSet,self.knowList)       #检查知识的数据的输入输出情况是否一致
         self._train()
         print("*" * 75)
         print("模型训练成功！")

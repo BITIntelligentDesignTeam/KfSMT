@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<info infoType="单调型" inputType="框架转速" outputType="径向间隙减少量">
+		<params>
+			<param RangeOrValue="range" id="0" maxValue="60" minValue="-20" relation="温度"/>
+			<param RangeOrValue="range" id="1" maxValue="5.0" minValue="0" relation="转台转速"/>
+		</params>
+		<section maxValue="57.3" minValue="5" singleTypeName="单调递增"/>
+	</info>

@@ -2,8 +2,12 @@ import numpy as np
 import copy
 import random
 from abc import ABCMeta, abstractmethod
+import os
+from knowledge.KnowledgeSet import KnowledgeSet
+from data.CsvData import CsvData
 
 class Benchmark(object, metaclass=ABCMeta):
+
     def __init__(self, **kwargs):
         """
         Constructor where values of options can be passed in.
@@ -15,14 +19,11 @@ class Benchmark(object, metaclass=ABCMeta):
         **kwargs : named arguments
             Set of options that can be optionally set; each option must have been declared.
 
-        Examples
-        --------
-        >>> from smt.problems import Sphere
-        >>> prob = Sphere(ndim=3)
         """
 
         self.ndim = 2
         self.xlimits = np.zeros((self.ndim, 2))
+        self.name = ""
         self._initialize()
 
     def _initialize(self) -> None:
@@ -35,8 +36,7 @@ class Benchmark(object, metaclass=ABCMeta):
         """
         pass
 
-
-    def __call__(self, x: np.ndarray,proportion = None ) -> np.ndarray:
+    def __call__(self, x: np.ndarray, proportion=None) -> np.ndarray:
         """
         Evaluate the function.
 
@@ -54,6 +54,7 @@ class Benchmark(object, metaclass=ABCMeta):
             Functions values if kx=None or derivative values if kx is an int.
         """
 
+        assert self.ndim == len(x[0]), "输入的维度不正确"
 
         self.dataSet = self._evaluate(x)
 
@@ -89,7 +90,6 @@ class Benchmark(object, metaclass=ABCMeta):
             return trainSet, testSet
 
 
-    @abstractmethod
     def _evaluate(self, x: np.ndarray) -> np.ndarray:
         """
         Implemented by surrogate models to evaluate the function.
@@ -108,3 +108,46 @@ class Benchmark(object, metaclass=ABCMeta):
             Functions values if kx=None or derivative values if kx is an int.
         """
         raise Exception("This problem has not been implemented correctly")
+
+
+    def getKnowledge(self,knowType = None,visual = True):
+        """
+
+        :param knowType:list,想要得到的知识的类型
+        :param visual: bool,是否查看知识的具体类型
+        :return:
+        """
+
+        path = os.path.dirname(os.path.abspath(__file__))
+        path2 = os.path.join(path, self.name)             #函数或者工程案例对应的文件夹
+        knowPath = os.path.join(path2, "knowledge")       #存放知识的文件夹
+
+        k = KnowledgeSet(folder=[knowPath],knowType=knowType)
+        knowList = k.readKnowledge()
+
+        if visual:
+            k.visualKnowledge()
+
+        return knowList
+
+    def getData(self, proportion= None):
+        """
+
+        :param proportion: None 或者 float,训练集与测试集的划分
+        :return:
+        """
+
+        path = os.path.dirname(os.path.abspath(__file__))
+        path2 = os.path.join(path, self.name)             #函数或者工程案例对应的文件夹
+        dataPath = os.path.join(path2, "data")        #存放数据的文件夹
+        csvPath = os.path.join(dataPath, self.name +"data.csv")
+
+        d = CsvData(csvPath)
+        dataSet = d.read()
+
+        if proportion:
+            trainSet, testSet = d.divide(0.8)
+            return trainSet, testSet
+        else:
+            return dataSet
+
